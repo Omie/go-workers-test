@@ -24,9 +24,9 @@ func main() {
 
     go workProvider()
 
-    go consumer("con1", 1 * time.Second)
-    go consumer("con2", 1 * time.Second)
-    go consumer("con3", 1 * time.Second)
+    go consumer("con1", 3 * time.Second)
+    go consumer("con2", 2 * time.Second)
+    go consumer("con3", 5 * time.Second)
 
     _ = <-exitCall
     time.Sleep(1 * time.Second) //give consumers time to process last batch, if any
@@ -45,7 +45,7 @@ func workProvider() {
         work <- workid
         workid++
 
-        if workid == 30 {
+        if workid == 10 {
             exitCall <- true
         }
 
@@ -58,8 +58,8 @@ func consumer(myname string, sleepTime time.Duration) {
     for {
         wakeupCall <- true
         workid := <-work
-        time.Sleep(sleepTime)
         fmt.Println(myname, " received ", workid)
+        time.Sleep(sleepTime)
         stats[myname]++
     }
 }
